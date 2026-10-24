@@ -41,3 +41,14 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Audit production dependencies
+        run: npm run security:audit
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: pulsegrid-build
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
