@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository";
 import { ListDevicesUseCase } from "../../../../src/application/use-cases/list-devices/list-devices-use-case";
 import { Device } from "../../../../src/domain/entities/device/device";
--describe("ListDevicesUseCase", () => {
+
+describe("ListDevicesUseCase", () => {
   let repository: InMemoryDeviceRepository;
   let sut: ListDevicesUseCase;
 

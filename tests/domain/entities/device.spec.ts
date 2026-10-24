@@ -25,6 +25,16 @@ describe("Device", () => {
     ).toThrow(DomainError);
   });
 
+  it("should not create a device with an empty location", () => {
+    expect(() =>
+      Device.create({
+        name: "Sensor 01",
+        type: "TEMPERATURE",
+        location: "   ",
+      }),
+    ).toThrow(DomainError);
+  });
+
   it("should trim device name and location", () => {
     const device = Device.create({
       name: "  Sensor 01  ",
