@@ -7,6 +7,7 @@ import { DeviceController } from "./presentation/http/controllers/device-control
 import { DeviceRoutes } from "./presentation/http/routes/device-routes";
 import { ListDevicesUseCase } from "./application/use-cases/list-devices/list-devices-use-case";
 import { GetDeviceByIdUseCase } from "./application/use-cases/get-device-by-id/get-device-by-id-use-case";
+import { HttpErrorHandler } from "./presentation/http/errors/http-error-handler";
 
 export class App {
   private readonly server: FastifyInstance;
@@ -15,6 +16,7 @@ export class App {
     this.server = fastify({
       logger: true,
     });
+    this.server.setErrorHandler(HttpErrorHandler.handle);
 
     this.registerRoutes();
   }
