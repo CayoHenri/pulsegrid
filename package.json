@@ -14,7 +14,9 @@
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
     "check": "npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run security:audit",
-    "security:audit": "npm audit --omit=dev --audit-level=high"
+    "security:audit": "npm audit --omit=dev --audit-level=high",
+    "postinstall": "prisma skills sync || exit 0",
+    "contract:emit": "prisma contract emit"
   },
   "repository": {
     "type": "git",
@@ -30,15 +32,26 @@
   "homepage": "https://github.com/CayoHenri/pulsegrid#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@prisma/cli-engine": "^0.9.0",
     "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^10.13.0",
+    "prisma": "^8.0.0-rc.27",
     "tsx": "^4.23.15",
     "typescript": "6.0",
     "typescript-eslint": "^8.72.0",
     "vitest": "^5.0.5"
   },
   "dependencies": {
+    "@prisma/client": "^7.10.1",
+    "@prisma/orm-postgres": "^8.0.0-rc.20",
+    "dotenv": "^18.0.9",
     "fastify": "^5.12.7"
+  },
+  "overrides": {
+    "@hono/node-server": "1.19.15",
+    "hono": "4.13.14",
+    "lodash": "4.18.1",
+    "valibot": "1.4.2"
   }
 }

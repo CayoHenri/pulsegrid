@@ -1,0 +1,24 @@
+// use prisma-8
+
+enum DeviceType {
+  TEMPERATURE
+  HUMIDITY
+  PRESSURE
+  MULTI_SENSOR
+}
+
+enum DeviceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Device {
+  id        Uuid         @id
+  name      VarChar(120)
+  type      DeviceType
+  location  VarChar(160)
+  status    DeviceStatus @default(ACTIVE)
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@map("devices")
+}
