@@ -1,0 +1,59 @@
+[
+  {
+    "id": "alterType.devices.created_at",
+    "label": "Alter type of \"devices\".\"created_at\" to timestamptz(3)",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "created_at",
+        "table": "devices"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"created_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "devices",
+          "created_at"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"created_at\" on \"devices\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "alter type of \"created_at\" to timestamptz(3)",
+        "sql": "ALTER TABLE \"public\".\"devices\" ALTER COLUMN \"created_at\" TYPE timestamptz(3) USING \"created_at\"::timestamptz(3)",
+        "meta": {
+          "convertedColumn": {
+            "table": "devices",
+            "column": "created_at",
+            "by": "cast"
+          }
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"created_at\" has type \"timestamp(3) with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "devices",
+          "created_at",
+          "timestamp(3) with time zone"
+        ]
+      }
+    ],
+    "meta": {
+      "warning": "TABLE_REWRITE"
+    }
+  }
+]

@@ -5,11 +5,11 @@ import { DeviceNotFoundError } from "../../../application/errors/device-not-foun
 export class HttpErrorHandler {
   public static async handle(
     error: FastifyError,
-    _request: FastifyRequest,
+    request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
-    
     if (error.validation) {
+      request.log.info({ err: error }, "Request validation failed");
       await reply.status(400).send({
         error: "Bad Request",
         message: "Invalid request data.",
@@ -19,6 +19,7 @@ export class HttpErrorHandler {
       return;
     }
     if (error instanceof DomainError) {
+      request.log.info({ err: error }, "Domain rule rejected request");
       await reply.status(400).send({
         error: "Bad Request",
         message: error.message,
@@ -28,6 +29,7 @@ export class HttpErrorHandler {
     }
 
     if (error instanceof DeviceNotFoundError) {
+      request.log.info({ err: error }, "Device was not found");
       await reply.status(404).send({
         error: "Not Found",
         message: error.message,
@@ -36,6 +38,7 @@ export class HttpErrorHandler {
       return;
     }
 
+    request.log.error({ err: error }, "Unhandled request error");
     await reply.status(500).send({
       error: "Internal Server Error",
       message: "An unexpected error occurred.",

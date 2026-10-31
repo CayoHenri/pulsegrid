@@ -54,8 +54,11 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-temporal@1",
-                  "kind": "scalar"
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
                 }
               },
               "id": {
@@ -162,13 +165,16 @@
               ],
               "columns": {
                 "created_at": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nullable": false
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
                 },
                 "id": {
                   "codecId": "pg/uuid@1",
@@ -251,7 +257,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9e683c99f07f52e1572ba202b50a8991351919f8c283b19334b8afd1cc337ec3"
+    "storageHash": "b57a5a1c49d7a4d599d7c8d516860a0f456019e3ed3bfe6c02c7f5476d38207e"
   },
   "capabilities": {
     "postgres": {

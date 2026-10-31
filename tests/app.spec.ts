@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { App } from "../src/app";
+import { InMemoryDeviceRepository } from "../src/infrastructure/repositories/in-memory/in-memory-device-repository";
 
 describe("HTTP API", () => {
   const apps: App[] = [];
@@ -9,7 +10,7 @@ describe("HTTP API", () => {
   });
 
   const createApp = (): App => {
-    const app = new App();
+    const app = new App(new InMemoryDeviceRepository());
     apps.push(app);
     return app;
   };
@@ -119,9 +120,10 @@ describe("HTTP API", () => {
 
   it("returns 404 when a device does not exist", async () => {
     const app = createApp();
-    const response = await app
-      .getServer()
-      .inject({ method: "GET", url: "/devices/missing" });
+    const response = await app.getServer().inject({
+      method: "GET",
+      url: "/devices/00000000-0000-4000-8000-000000000000",
+    });
 
     expect(response.statusCode).toBe(404);
     expect(response.json()).toMatchObject({ error: "Not Found" });

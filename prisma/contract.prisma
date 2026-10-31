@@ -18,7 +18,7 @@ model Device {
   type      DeviceType
   location  VarChar(160)
   status    DeviceStatus @default(ACTIVE)
-  createdAt DateTime     @default(now()) @map("created_at")
+  createdAt TimestamptzString(3) @default(now()) @map("created_at")
 
   @@map("devices")
 }
