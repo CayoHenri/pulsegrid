@@ -9,11 +9,23 @@ import { GetDeviceByIdUseCase } from "./application/use-cases/get-device-by-id/g
 import { HttpErrorHandler } from "./presentation/http/errors/http-error-handler";
 import { PrismaDeviceRepository } from "./infrastructure/database/prisma/repositories/prisma-device-repository";
 import type { DeviceRepository } from "./domain/repositories/device-repository";
+import { ApplicationLifecycle } from "./application/services/application-lifecycle";
+import { PrismaDatabaseHealthCheck } from "./infrastructure/database/prisma/prisma-database-health-check";
+import { HealthController } from "./presentation/http/controllers/health-controller";
+import { db } from "../prisma/db";
+import type { DatabaseHealthCheck } from "./application/ports/database-health-check";
 
 export class App {
   private readonly server: FastifyInstance;
+  private readonly lifecycle = new ApplicationLifecycle();
+  private readonly prisma = db;
+  private readonly databaseHealthCheck: DatabaseHealthCheck;
 
-  constructor(deviceRepository: DeviceRepository = new PrismaDeviceRepository()) {
+  constructor(
+    deviceRepository: DeviceRepository = new PrismaDeviceRepository(),
+    databaseHealthCheck: DatabaseHealthCheck = new PrismaDatabaseHealthCheck(),
+  ) {
+    this.databaseHealthCheck = databaseHealthCheck;
     this.server = fastify({
       logger: true,
     });
@@ -26,7 +38,23 @@ export class App {
     return this.server;
   }
 
+  public getPrisma(): typeof db {
+    return this.prisma;
+  }
+
+  public getLifecycle(): ApplicationLifecycle {
+    return this.lifecycle;
+  }
+
+  public async initialize(): Promise<void> {
+    await this.databaseHealthCheck.ping();
+  }
+
   private registerRoutes(deviceRepository: DeviceRepository): void {
+    const healthController = new HealthController(
+      this.lifecycle,
+      this.databaseHealthCheck,
+    );
     const registerDeviceUseCase = new RegisterDeviceUseCase(deviceRepository);
     const listDevicesUseCase = new ListDevicesUseCase(deviceRepository);
     const getDeviceByIdUseCase = new GetDeviceByIdUseCase(deviceRepository);
@@ -37,7 +65,7 @@ export class App {
     );
 
     const rootRoutes = new RootRoutes(this.server);
-    const healthRoutes = new HealthRoutes(this.server);
+    const healthRoutes = new HealthRoutes(this.server, healthController);
     const deviceRoutes = new DeviceRoutes(this.server, deviceController);
 
     rootRoutes.register();

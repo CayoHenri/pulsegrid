@@ -1,6 +1,6 @@
 import { Device } from "../../../../domain/entities/device/device";
 import type { DeviceRepository } from "../../../../domain/repositories/device-repository";
-import { db } from "../prisma-db";
+import { db } from "../../../../../prisma/db";
 import { PrismaDeviceMapper } from "../mappers/prisma-device-mapper";
 
 export class PrismaDeviceRepository implements DeviceRepository {
