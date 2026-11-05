@@ -33,7 +33,8 @@ export class HealthController {
       await reply.status(200).send({
         status: "ready",
       });
-    } catch (_) {
+    } catch (error) {
+      console.error("Database health check failed:", error);
       await reply.status(503).send({
         status: "not_ready",
       });

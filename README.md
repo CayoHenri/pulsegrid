@@ -59,6 +59,22 @@ npm run build
 npm start
 ```
 
+## Health checks
+
+A API expõe três endpoints para monitoramento:
+
+| Endpoint | Resposta saudável | Comportamento |
+| --- | --- | --- |
+| `GET /health` | `200` — `{"status":"ok"}` | Verifica se a API responde; não consulta o banco. |
+| `GET /live` | `200` — `{"status":"alive"}` | Indica que o processo está ativo. |
+| `GET /ready` | `200` — `{"status":"ready"}` | Consulta o banco e verifica se a aplicação aceita tráfego. Retorna `503` — `{"status":"not_ready"}` se o banco falhar ou a aplicação estiver encerrando. |
+
+Os testes automatizados desses endpoints ficam em `tests/health.spec.ts`. Eles simulam o health check do banco, sem exigir uma conexão PostgreSQL:
+
+```bash
+npm test -- tests/health.spec.ts
+```
+
 ## Testes
 
 Os comandos padrão rodam testes unitários e HTTP sem acessar o PostgreSQL:
