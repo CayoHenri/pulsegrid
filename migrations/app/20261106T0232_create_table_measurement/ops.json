@@ -1,0 +1,199 @@
+[
+  {
+    "id": "table.measurements",
+    "label": "Create table \"measurements\"",
+    "summary": "Creates table \"measurements\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "measurements"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"measurements\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"measurements\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"measurements\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"measurements\"",
+        "sql": "CREATE TABLE \"public\".\"measurements\" (\n  \"created_at\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"device_id\" uuid NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"recorded_at\" timestamptz(3) NOT NULL,\n  \"value\" float8 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"measurements\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"measurements\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"measurements\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.measurements.measurements_device_id_idx_8f329912",
+    "label": "Create index \"measurements_device_id_idx_8f329912\" on \"measurements\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "measurements_device_id_idx_8f329912",
+        "table": "measurements"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"measurements_device_id_idx_8f329912\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"measurements_device_id_idx_8f329912\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"measurements_device_id_idx_8f329912\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"measurements_device_id_idx_8f329912\"",
+        "sql": "CREATE INDEX \"measurements_device_id_idx_8f329912\" ON \"public\".\"measurements\" (\"device_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"measurements_device_id_idx_8f329912\" exists on \"measurements\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"measurements_device_id_idx_8f329912\"",
+          "i",
+          "I",
+          "\"public\".\"measurements\"",
+          "btree",
+          "[\"device_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.measurements.measurements_device_id_recorded_at_idx_c1f79609",
+    "label": "Create index \"measurements_device_id_recorded_at_idx_c1f79609\" on \"measurements\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "measurements_device_id_recorded_at_idx_c1f79609",
+        "table": "measurements"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"measurements_device_id_recorded_at_idx_c1f79609\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"measurements_device_id_recorded_at_idx_c1f79609\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"measurements_device_id_recorded_at_idx_c1f79609\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"measurements_device_id_recorded_at_idx_c1f79609\"",
+        "sql": "CREATE INDEX \"measurements_device_id_recorded_at_idx_c1f79609\" ON \"public\".\"measurements\" (\"device_id\", \"recorded_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"measurements_device_id_recorded_at_idx_c1f79609\" exists on \"measurements\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"measurements_device_id_recorded_at_idx_c1f79609\"",
+          "i",
+          "I",
+          "\"public\".\"measurements\"",
+          "btree",
+          "[\"device_id\",\"recorded_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.measurements.measurements_device_id_fkey",
+    "label": "Add foreign key \"measurements_device_id_fkey\" on \"measurements\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "measurements_device_id_fkey",
+        "table": "measurements"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"measurements_device_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "measurements_device_id_fkey",
+          "public",
+          "\"public\".\"measurements\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"measurements_device_id_fkey\" on \"measurements\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"measurements_device_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"measurements\"\nADD CONSTRAINT \"measurements_device_id_fkey\"\nFOREIGN KEY (\"device_id\")\nREFERENCES \"public\".\"devices\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"measurements_device_id_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "measurements_device_id_fkey",
+          "public",
+          "\"public\".\"measurements\"",
+          "f",
+          "[\"device_id\"]",
+          "\"public\".\"devices\"",
+          "[\"id\"]",
+          "r",
+          "a"
+        ]
+      }
+    ]
+  }
+]
