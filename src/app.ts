@@ -14,6 +14,9 @@ import { PrismaDatabaseHealthCheck } from "./infrastructure/database/prisma/pris
 import { HealthController } from "./presentation/http/controllers/health-controller";
 import { db } from "../prisma/db";
 import type { DatabaseHealthCheck } from "./application/ports/database-health-check";
+import { PrismaMeasurementRepository } from "./infrastructure/database/prisma/repositories/prisma-measurement-repository";
+import { RegisterMeasurementUseCase } from "./application/use-cases/register-measurement/register-measurement-use-case";
+import { MeasurementRepository } from "./domain/repositories/measurement-repository";
 
 export class App {
   private readonly server: FastifyInstance;
@@ -24,6 +27,7 @@ export class App {
   constructor(
     deviceRepository: DeviceRepository = new PrismaDeviceRepository(),
     databaseHealthCheck: DatabaseHealthCheck = new PrismaDatabaseHealthCheck(),
+    measurementRepository: PrismaMeasurementRepository = new PrismaMeasurementRepository(),
   ) {
     this.databaseHealthCheck = databaseHealthCheck;
     this.server = fastify({
@@ -31,7 +35,7 @@ export class App {
     });
     this.server.setErrorHandler(HttpErrorHandler.handle);
 
-    this.registerRoutes(deviceRepository);
+    this.registerRoutes(deviceRepository, measurementRepository);
   }
 
   public getServer(): FastifyInstance {
@@ -50,7 +54,10 @@ export class App {
     await this.databaseHealthCheck.ping();
   }
 
-  private registerRoutes(deviceRepository: DeviceRepository): void {
+  private registerRoutes(
+    deviceRepository: DeviceRepository,
+    measurementRepository: MeasurementRepository,
+  ): void {
     const healthController = new HealthController(
       this.lifecycle,
       this.databaseHealthCheck,
@@ -62,6 +69,11 @@ export class App {
       registerDeviceUseCase,
       listDevicesUseCase,
       getDeviceByIdUseCase,
+    );
+
+    const registerMeasurementUseCase = new RegisterMeasurementUseCase(
+      deviceRepository,
+      measurementRepository,
     );
 
     const rootRoutes = new RootRoutes(this.server);

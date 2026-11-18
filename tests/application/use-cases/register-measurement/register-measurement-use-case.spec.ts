@@ -10,7 +10,9 @@ describe("RegisterMeasurementUseCase", () => {
   let measurementRepository: {
     create: ReturnType<typeof vi.fn<MeasurementRepository["create"]>>;
     findById: ReturnType<typeof vi.fn<MeasurementRepository["findById"]>>;
-    findByDeviceId: ReturnType<typeof vi.fn<MeasurementRepository["findByDeviceId"]>>;
+    findByDeviceId: ReturnType<
+      typeof vi.fn<MeasurementRepository["findByDeviceId"]>
+    >;
   };
   let sut: RegisterMeasurementUseCase;
 
@@ -78,31 +80,66 @@ describe("RegisterMeasurementUseCase", () => {
   });
 
   it.each([
-    { value: NaN, recordedAt: new Date("2026-11-11"), message: "Measurement value must be finite" },
-    { value: Infinity, recordedAt: new Date("2026-11-11"), message: "Measurement value must be finite" },
-    { value: -Infinity, recordedAt: new Date("2026-11-11"), message: "Measurement value must be finite" },
-    { value: 10, recordedAt: new Date(NaN), message: "Invalid measurement date" },
-  ])("should not persist invalid measurement $message ($value)", async ({ value, recordedAt, message }) => {
-    const device = Device.create({ name: "Sensor", type: "TEMPERATURE", location: "Lab" });
-    await deviceRepository.create(device);
-    await expect(sut.execute({ deviceId: device.id, value, recordedAt })).rejects.toThrow(message);
-    expect(measurementRepository.create).not.toHaveBeenCalled();
-  });
+    {
+      value: NaN,
+      recordedAt: new Date("2026-11-11"),
+      message: "Measurement value must be finite",
+    },
+    {
+      value: Infinity,
+      recordedAt: new Date("2026-11-11"),
+      message: "Measurement value must be finite",
+    },
+    {
+      value: -Infinity,
+      recordedAt: new Date("2026-11-11"),
+      message: "Measurement value must be finite",
+    },
+    {
+      value: 10,
+      recordedAt: new Date(NaN),
+      message: "Invalid measurement date",
+    },
+  ])(
+    "should not persist invalid measurement $message ($value)",
+    async ({ value, recordedAt, message }) => {
+      const device = Device.create({
+        name: "Sensor",
+        type: "TEMPERATURE",
+        location: "Lab",
+      });
+      await deviceRepository.create(device);
+      await expect(
+        sut.execute({ deviceId: device.id, value, recordedAt }),
+      ).rejects.toThrow(message);
+      expect(measurementRepository.create).not.toHaveBeenCalled();
+    },
+  );
 
   it("should propagate device lookup failures without persisting", async () => {
     const error = new Error("Lookup failed");
-    const find = vi.spyOn(deviceRepository, "findById").mockRejectedValueOnce(error);
-    await expect(sut.execute({ deviceId: "device-123", value: 0, recordedAt: new Date() })).rejects.toBe(error);
+    const find = vi
+      .spyOn(deviceRepository, "findById")
+      .mockRejectedValueOnce(error);
+    await expect(
+      sut.execute({ deviceId: "device-123", value: 0, recordedAt: new Date() }),
+    ).rejects.toBe(error);
     expect(find).toHaveBeenCalledExactlyOnceWith("device-123");
     expect(measurementRepository.create).not.toHaveBeenCalled();
   });
 
   it("should propagate measurement persistence failures", async () => {
-    const device = Device.create({ name: "Sensor", type: "TEMPERATURE", location: "Lab" });
+    const device = Device.create({
+      name: "Sensor",
+      type: "TEMPERATURE",
+      location: "Lab",
+    });
     await deviceRepository.create(device);
     const error = new Error("Persistence failed");
     measurementRepository.create.mockRejectedValueOnce(error);
-    await expect(sut.execute({ deviceId: device.id, value: -1, recordedAt: new Date() })).rejects.toBe(error);
+    await expect(
+      sut.execute({ deviceId: device.id, value: -1, recordedAt: new Date() }),
+    ).rejects.toBe(error);
     expect(measurementRepository.create).toHaveBeenCalledTimes(1);
   });
 });
