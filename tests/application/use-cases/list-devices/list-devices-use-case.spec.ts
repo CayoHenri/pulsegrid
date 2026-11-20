@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository";
-import { ListDevicesUseCase } from "../../../../src/application/use-cases/list-devices/list-devices-use-case";
-import { Device } from "../../../../src/domain/entities/device/device";
+import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository.js";
+import { ListDevicesUseCase } from "../../../../src/application/use-cases/list-devices/list-devices-use-case.js";
+import { Device } from "../../../../src/domain/entities/device/device.js";
 
 describe("ListDevicesUseCase", () => {
   let repository: InMemoryDeviceRepository;

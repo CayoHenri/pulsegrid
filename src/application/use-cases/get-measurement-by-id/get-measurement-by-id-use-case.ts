@@ -1,7 +1,7 @@
-import { MeasurementRepository } from "../../../domain/repositories/measurement-repository";
-import { MeasurementNotFoundError } from "../../errors/measurement-not-found-error";
-import { MeasurementOutput, toMeasurementOutput } from "../measurement-output";
-import { GetMeasurementByIdInput } from "./get-measurement-by-id-input";
+import { MeasurementRepository } from "../../../domain/repositories/measurement-repository.js";
+import { MeasurementNotFoundError } from "../../errors/measurement-not-found-error.js";
+import { MeasurementOutput, toMeasurementOutput } from "../measurement-output.js";
+import { GetMeasurementByIdInput } from "./get-measurement-by-id-input.js";
 
 export class GetMeasurementByIdUseCase {
   constructor(private readonly measurementRepository: MeasurementRepository) {}

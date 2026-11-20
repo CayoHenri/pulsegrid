@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { Device } from "../../../../../src/domain/entities/device/device";
-import { PrismaDeviceMapper } from "../../../../../src/infrastructure/database/prisma/mappers/prisma-device-mapper";
-import type { Models } from "../../../../../prisma/contract";
+import { Device } from "../../../../../src/domain/entities/device/device.js";
+import { PrismaDeviceMapper } from "../../../../../src/infrastructure/database/prisma/mappers/prisma-device-mapper.js";
+import type { Models } from "../../../../../prisma/contract.js";
 
 describe("PrismaDeviceMapper", () => {
   const createdAtIso = "2026-10-30T15:45:12.123Z";

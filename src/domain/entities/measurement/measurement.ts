@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import {
   CreateMeasurementProps,
   RestoreMeasurementProps,
-} from "./measurement-props";
+} from "./measurement-props.js";
 
 export class Measurement {
   private constructor(

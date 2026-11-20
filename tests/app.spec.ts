@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { App } from "../src/app";
-import { InMemoryDeviceRepository } from "../src/infrastructure/repositories/in-memory/in-memory-device-repository";
-import { InMemoryMeasurementRepository } from "../src/infrastructure/repositories/in-memory/in-memory-measurement-repository";
+import { App } from "../src/app.js";
+import { InMemoryDeviceRepository } from "../src/infrastructure/repositories/in-memory/in-memory-device-repository.js";
+import { InMemoryMeasurementRepository } from "../src/infrastructure/repositories/in-memory/in-memory-measurement-repository.js";
 
 describe("HTTP API", () => {
   const apps: App[] = [];

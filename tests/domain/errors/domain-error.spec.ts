@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DomainError } from "../../../src/domain/errors/domain-error";
+import { DomainError } from "../../../src/domain/errors/domain-error.js";
 
 describe("DomainError", () => {
   it("should preserve the message and identify the domain error", () => {

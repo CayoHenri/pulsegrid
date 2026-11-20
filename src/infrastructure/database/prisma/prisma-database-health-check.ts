@@ -1,5 +1,5 @@
-import { db } from "../../../../prisma/db";
-import { DatabaseHealthCheck } from "../../../application/ports/database-health-check";
+import { db } from "../../../../prisma/db.js";
+import { DatabaseHealthCheck } from "../../../application/ports/database-health-check.js";
 
 export class PrismaDatabaseHealthCheck implements DatabaseHealthCheck {
   async ping(): Promise<void> {

@@ -1,8 +1,8 @@
-import type { RegisterDeviceUseCase } from "../../../application/use-cases/register-device/register-device-use-case";
-import type { RegisterDeviceInput } from "../../../application/use-cases/register-device/register-device-input";
-import { ListDevicesUseCase } from "../../../application/use-cases/list-devices/list-devices-use-case";
+import type { RegisterDeviceUseCase } from "../../../application/use-cases/register-device/register-device-use-case.js";
+import type { RegisterDeviceInput } from "../../../application/use-cases/register-device/register-device-input.js";
+import { ListDevicesUseCase } from "../../../application/use-cases/list-devices/list-devices-use-case.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { GetDeviceByIdUseCase } from "../../../application/use-cases/get-device-by-id/get-device-by-id-use-case";
+import { GetDeviceByIdUseCase } from "../../../application/use-cases/get-device-by-id/get-device-by-id-use-case.js";
 
 export class DeviceController {
   constructor(

@@ -1,9 +1,9 @@
 import { FastifyReply } from "fastify";
-import { RegisterMeasurementInput } from "../../../application/use-cases/register-measurement/register-measurement-input";
-import { RegisterMeasurementUseCase } from "../../../application/use-cases/register-measurement/register-measurement-use-case";
+import { RegisterMeasurementInput } from "../../../application/use-cases/register-measurement/register-measurement-input.js";
+import { RegisterMeasurementUseCase } from "../../../application/use-cases/register-measurement/register-measurement-use-case.js";
 import type { FastifyRequest } from "fastify";
-import { GetMeasurementByIdUseCase } from "../../../application/use-cases/get-measurement-by-id/get-measurement-by-id-use-case";
-import { ListMeasurementsByDeviceUseCase } from "../../../application/use-cases/list-measurements-by-device/list-measurements-by-device-use-case";
+import { GetMeasurementByIdUseCase } from "../../../application/use-cases/get-measurement-by-id/get-measurement-by-id-use-case.js";
+import { ListMeasurementsByDeviceUseCase } from "../../../application/use-cases/list-measurements-by-device/list-measurements-by-device-use-case.js";
 
 export class MeasurementController {
   constructor(

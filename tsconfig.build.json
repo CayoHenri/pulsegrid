@@ -1,10 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noEmit": false,
-    "rootDir": "..",
+    "rootDir": ".",
     "outDir": "./dist"
   },
-  "include": ["src/**/*.ts", "prisma/db.ts"],
+  "include": ["src/**/*.ts", "prisma/**/*.ts"],
   "exclude": ["node_modules", "dist", "tests"]
 }

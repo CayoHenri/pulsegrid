@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Device } from "../../../src/domain/entities/device/device";
-import { DomainError } from "../../../src/domain/errors/domain-error";
+import { Device } from "../../../src/domain/entities/device/device.js";
+import { DomainError } from "../../../src/domain/errors/domain-error.js";
 
 describe("Device", () => {
   afterEach(() => vi.useRealTimers());

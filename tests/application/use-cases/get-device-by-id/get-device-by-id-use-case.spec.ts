@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository";
-import { GetDeviceByIdUseCase } from "../../../../src/application/use-cases/get-device-by-id/get-device-by-id-use-case";
-import { Device } from "../../../../src/domain/entities/device/device";
-import { DeviceNotFoundError } from "../../../../src/application/errors/device-not-found-error";
+import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository.js";
+import { GetDeviceByIdUseCase } from "../../../../src/application/use-cases/get-device-by-id/get-device-by-id-use-case.js";
+import { Device } from "../../../../src/domain/entities/device/device.js";
+import { DeviceNotFoundError } from "../../../../src/application/errors/device-not-found-error.js";
 
 describe("GetDeviceByIdUseCase", () => {
   let repository: InMemoryDeviceRepository;

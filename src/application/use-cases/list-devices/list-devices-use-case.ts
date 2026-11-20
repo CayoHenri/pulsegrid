@@ -1,5 +1,5 @@
-import { DeviceRepository } from "../../../domain/repositories/device-repository";
-import { DeviceOutput, toDeviceOutput } from "../device-output";
+import { DeviceRepository } from "../../../domain/repositories/device-repository.js";
+import { DeviceOutput, toDeviceOutput } from "../device-output.js";
 
 export class ListDevicesUseCase {
   constructor(private readonly deviceRepository: DeviceRepository) {}

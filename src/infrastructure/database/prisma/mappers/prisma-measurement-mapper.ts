@@ -1,7 +1,7 @@
 import { CreateInput } from "@prisma/orm-postgres/orm-client";
 import type { Scalars } from "@prisma/orm-postgres/family-contract/types";
-import { Contract, Models } from "../../../../../prisma/contract";
-import { Measurement } from "../../../../domain/entities/measurement/measurement";
+import { Contract, Models } from "../../../../../prisma/contract.js";
+import { Measurement } from "../../../../domain/entities/measurement/measurement.js";
 
 type PrismaMeasurementRecord = Scalars<Models.public_Measurement>;
 type PrismaMeasurementInput = CreateInput<Contract, "Measurement">;

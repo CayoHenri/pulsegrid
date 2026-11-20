@@ -1,10 +1,10 @@
 import { FastifyInstance } from "fastify";
-import { MeasurementController } from "../controllers/measurement-controller";
-import { Routes } from "./routes.interface";
-import { RegisterMeasurementInput } from "../../../application/use-cases/register-measurement/register-measurement-input";
-import { registerMeasurementSchema } from "../schemas/register-measurement-schema";
-import { getMeasurementByIdSchema } from "../schemas/get-measurement-by-id-schema";
-import { listMeasurementsByDeviceSchema } from "../schemas/list-measurements-by-device-schema";
+import { MeasurementController } from "../controllers/measurement-controller.js";
+import type { Routes } from "./routes.interface.js";
+import { RegisterMeasurementInput } from "../../../application/use-cases/register-measurement/register-measurement-input.js";
+import { registerMeasurementSchema } from "../schemas/register-measurement-schema.js";
+import { getMeasurementByIdSchema } from "../schemas/get-measurement-by-id-schema.js";
+import { listMeasurementsByDeviceSchema } from "../schemas/list-measurements-by-device-schema.js";
 
 export class MeasurementRoutes implements Routes {
   constructor(

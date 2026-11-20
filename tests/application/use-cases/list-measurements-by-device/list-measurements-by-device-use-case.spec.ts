@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { ListMeasurementsByDeviceUseCase } from "../../../../src/application/use-cases/list-measurements-by-device/list-measurements-by-device-use-case";
-import { Device } from "../../../../src/domain/entities/device/device";
-import { Measurement } from "../../../../src/domain/entities/measurement/measurement";
-import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository";
+import { ListMeasurementsByDeviceUseCase } from "../../../../src/application/use-cases/list-measurements-by-device/list-measurements-by-device-use-case.js";
+import { Device } from "../../../../src/domain/entities/device/device.js";
+import { Measurement } from "../../../../src/domain/entities/measurement/measurement.js";
+import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository.js";
 
 describe("ListMeasurementsByDeviceUseCase", () => {
   it("returns measurements for an existing device", async () => {

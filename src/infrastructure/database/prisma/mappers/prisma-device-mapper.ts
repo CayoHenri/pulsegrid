@@ -1,6 +1,6 @@
 import type { CreateInput } from "@prisma/orm-postgres/orm-client";
-import type { Contract, Models } from "../../../../../prisma/contract";
-import { Device } from "../../../../domain/entities/device/device";
+import type { Contract, Models } from "../../../../../prisma/contract.js";
+import { Device } from "../../../../domain/entities/device/device.js";
 
 type PrismaDeviceRecord = Models.public_Device;
 type PrismaDeviceInput = CreateInput<Contract, "Device">;

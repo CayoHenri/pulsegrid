@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
-import { HttpErrorHandler } from "../../../../src/presentation/http/errors/http-error-handler";
-import { DomainError } from "../../../../src/domain/errors/domain-error";
-import { DeviceNotFoundError } from "../../../../src/application/errors/device-not-found-error";
+import { HttpErrorHandler } from "../../../../src/presentation/http/errors/http-error-handler.js";
+import { DomainError } from "../../../../src/domain/errors/domain-error.js";
+import { DeviceNotFoundError } from "../../../../src/application/errors/device-not-found-error.js";
 
 describe("HttpErrorHandler", () => {
   const createReply = () => {

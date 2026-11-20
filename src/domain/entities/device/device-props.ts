@@ -1,4 +1,4 @@
-import type { DeviceStatus, DeviceType } from "./device-types";
+import type { DeviceStatus, DeviceType } from "./device-types.js";
 
 export interface DeviceProps {
   name: string;

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { App } from "../src/app";
-import type { DatabaseHealthCheck } from "../src/application/ports/database-health-check";
-import { InMemoryDeviceRepository } from "../src/infrastructure/repositories/in-memory/in-memory-device-repository";
+import { App } from "../src/app.js";
+import type { DatabaseHealthCheck } from "../src/application/ports/database-health-check.js";
+import { InMemoryDeviceRepository } from "../src/infrastructure/repositories/in-memory/in-memory-device-repository.js";
 
 describe("Health endpoints", () => {
   const apps: App[] = [];
@@ -57,7 +57,8 @@ describe("Health endpoints", () => {
       .fn<DatabaseHealthCheck["ping"]>()
       .mockRejectedValue(new Error("Database unavailable"));
     const app = createApp(ping);
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const appLogger = app.getServer().log;
+    const errorLog = vi.spyOn(appLogger, "error");
 
     const response = await app
       .getServer()
@@ -66,6 +67,10 @@ describe("Health endpoints", () => {
     expect(response.statusCode).toBe(503);
     expect(response.json()).toEqual({ status: "not_ready" });
     expect(ping).toHaveBeenCalledOnce();
+    expect(errorLog).toHaveBeenCalledWith(
+      { err: expect.any(Error) },
+      "Database health check failed",
+    );
   });
 
   it("returns not ready without pinging the database during shutdown", async () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { GetMeasurementByIdUseCase } from "../../../../src/application/use-cases/get-measurement-by-id/get-measurement-by-id-use-case";
-import { MeasurementNotFoundError } from "../../../../src/application/errors/measurement-not-found-error";
-import { Measurement } from "../../../../src/domain/entities/measurement/measurement";
+import { GetMeasurementByIdUseCase } from "../../../../src/application/use-cases/get-measurement-by-id/get-measurement-by-id-use-case.js";
+import { MeasurementNotFoundError } from "../../../../src/application/errors/measurement-not-found-error.js";
+import { Measurement } from "../../../../src/domain/entities/measurement/measurement.js";
 
 describe("GetMeasurementByIdUseCase", () => {
   it("returns a measurement output when found", async () => {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DomainError } from "../../../../src/domain/errors/domain-error";
-import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository";
-import { RegisterDeviceUseCase } from "../../../../src/application/use-cases/register-device/register-device-use-case";
+import { DomainError } from "../../../../src/domain/errors/domain-error.js";
+import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository.js";
+import { RegisterDeviceUseCase } from "../../../../src/application/use-cases/register-device/register-device-use-case.js";
 
 describe("RegisterDeviceUseCase", () => {
   let repository: InMemoryDeviceRepository;

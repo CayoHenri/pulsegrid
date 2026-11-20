@@ -1,8 +1,8 @@
 import { afterAll, afterEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
-import { Device } from "../../../../../../src/domain/entities/device/device";
-import { PrismaDeviceRepository } from "../../../../../../src/infrastructure/database/prisma/repositories/prisma-device-repository";
-import { db } from "../../../../../../prisma/db";
+import { Device } from "../../../../../../src/domain/entities/device/device.js";
+import { PrismaDeviceRepository } from "../../../../../../src/infrastructure/database/prisma/repositories/prisma-device-repository.js";
+import { db } from "../../../../../../prisma/db.js";
 
 describe("PrismaDeviceRepository integration", () => {
   const repository = new PrismaDeviceRepository();

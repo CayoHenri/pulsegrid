@@ -1,4 +1,4 @@
-import { Measurement } from "../entities/measurement/measurement";
+import { Measurement } from "../entities/measurement/measurement.js";
 
 export interface MeasurementRepository {
   create(measurement: Measurement): Promise<void>;

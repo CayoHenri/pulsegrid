@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { Measurement } from "../../../../../src/domain/entities/measurement/measurement";
-import { PrismaMeasurementMapper } from "../../../../../src/infrastructure/database/prisma/mappers/prisma-measurement-mapper";
-import type { Models } from "../../../../../prisma/contract";
+import { Measurement } from "../../../../../src/domain/entities/measurement/measurement.js";
+import { PrismaMeasurementMapper } from "../../../../../src/infrastructure/database/prisma/mappers/prisma-measurement-mapper.js";
+import type { Models } from "../../../../../prisma/contract.js";
 
 describe("PrismaMeasurementMapper", () => {
   const recordedAtIso = "2026-10-30T15:40:10.456Z";

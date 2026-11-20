@@ -1,7 +1,7 @@
 import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
-import { DomainError } from "../../../domain/errors/domain-error";
-import { DeviceNotFoundError } from "../../../application/errors/device-not-found-error";
-import { MeasurementNotFoundError } from "../../../application/errors/measurement-not-found-error";
+import { DomainError } from "../../../domain/errors/domain-error.js";
+import { DeviceNotFoundError } from "../../../application/errors/device-not-found-error.js";
+import { MeasurementNotFoundError } from "../../../application/errors/measurement-not-found-error.js";
 
 export class HttpErrorHandler {
   public static async handle(

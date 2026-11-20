@@ -1,8 +1,8 @@
-import { Measurement } from "../../../domain/entities/measurement/measurement";
-import { DeviceRepository } from "../../../domain/repositories/device-repository";
-import { MeasurementRepository } from "../../../domain/repositories/measurement-repository";
-import { DeviceNotFoundError } from "../../errors/device-not-found-error";
-import { RegisterMeasurementInput } from "./register-measurement-input";
+import { Measurement } from "../../../domain/entities/measurement/measurement.js";
+import { DeviceRepository } from "../../../domain/repositories/device-repository.js";
+import { MeasurementRepository } from "../../../domain/repositories/measurement-repository.js";
+import { DeviceNotFoundError } from "../../errors/device-not-found-error.js";
+import { RegisterMeasurementInput } from "./register-measurement-input.js";
 
 export class RegisterMeasurementUseCase {
   constructor(

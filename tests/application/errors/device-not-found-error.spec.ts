@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DeviceNotFoundError } from "../../../src/application/errors/device-not-found-error";
+import { DeviceNotFoundError } from "../../../src/application/errors/device-not-found-error.js";
 
 describe("DeviceNotFoundError", () => {
   it("should identify the error and include the missing device ID", () => {

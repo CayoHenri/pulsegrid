@@ -1,8 +1,8 @@
 import {
   DeviceStatus,
   DeviceType,
-} from "../../domain/entities/device/device-types";
-import { Device } from "../../domain/entities/device/device";
+} from "../../domain/entities/device/device-types.js";
+import { Device } from "../../domain/entities/device/device.js";
 
 export interface DeviceOutput {
   id: string;

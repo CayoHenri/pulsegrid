@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { Routes } from "./routes.interface";
+import type { Routes } from "./routes.interface.js";
 
 export class RootRoutes implements Routes {
   constructor(private readonly server: FastifyInstance) {}

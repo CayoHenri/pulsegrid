@@ -1,7 +1,7 @@
-import { db } from "../../../../../prisma/db";
-import { Measurement } from "../../../../domain/entities/measurement/measurement";
-import { MeasurementRepository } from "../../../../domain/repositories/measurement-repository";
-import { PrismaMeasurementMapper } from "../mappers/prisma-measurement-mapper";
+import { db } from "../../../../../prisma/db.js";
+import { Measurement } from "../../../../domain/entities/measurement/measurement.js";
+import { MeasurementRepository } from "../../../../domain/repositories/measurement-repository.js";
+import { PrismaMeasurementMapper } from "../mappers/prisma-measurement-mapper.js";
 
 export class PrismaMeasurementRepository implements MeasurementRepository {
   public async create(measurement: Measurement): Promise<void> {

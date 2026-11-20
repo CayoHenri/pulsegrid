@@ -1,7 +1,7 @@
-import { Device } from "../../../domain/entities/device/device";
-import type { DeviceRepository } from "../../../domain/repositories/device-repository";
-import { DeviceOutput, toDeviceOutput } from "../device-output";
-import type { RegisterDeviceInput } from "./register-device-input";
+import { Device } from "../../../domain/entities/device/device.js";
+import type { DeviceRepository } from "../../../domain/repositories/device-repository.js";
+import { DeviceOutput, toDeviceOutput } from "../device-output.js";
+import type { RegisterDeviceInput } from "./register-device-input.js";
 
 export class RegisterDeviceUseCase {
   constructor(private readonly deviceRepository: DeviceRepository) {}

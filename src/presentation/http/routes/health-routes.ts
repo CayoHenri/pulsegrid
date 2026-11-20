@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { Routes } from "./routes.interface";
-import { HealthController } from "../controllers/health-controller";
+import type { Routes } from "./routes.interface.js";
+import { HealthController } from "../controllers/health-controller.js";
 
 export class HealthRoutes implements Routes {
   constructor(

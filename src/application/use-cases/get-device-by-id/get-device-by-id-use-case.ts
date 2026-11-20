@@ -1,7 +1,7 @@
-import { DeviceRepository } from "../../../domain/repositories/device-repository";
-import { DeviceNotFoundError } from "../../errors/device-not-found-error";
-import { DeviceOutput, toDeviceOutput } from "../device-output";
-import { GetDeviceByIdInput } from "./get-device-by-id-input";
+import { DeviceRepository } from "../../../domain/repositories/device-repository.js";
+import { DeviceNotFoundError } from "../../errors/device-not-found-error.js";
+import { DeviceOutput, toDeviceOutput } from "../device-output.js";
+import { GetDeviceByIdInput } from "./get-device-by-id-input.js";
 
 export class GetDeviceByIdUseCase {
   constructor(private readonly deviceRepository: DeviceRepository) {}

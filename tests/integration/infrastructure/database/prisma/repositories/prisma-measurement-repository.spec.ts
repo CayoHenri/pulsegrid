@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, describe, expect, it } from "vitest";
-import { Device } from "../../../../../../src/domain/entities/device/device";
-import { Measurement } from "../../../../../../src/domain/entities/measurement/measurement";
-import { PrismaDeviceRepository } from "../../../../../../src/infrastructure/database/prisma/repositories/prisma-device-repository";
-import { PrismaMeasurementRepository } from "../../../../../../src/infrastructure/database/prisma/repositories/prisma-measurement-repository";
-import { db } from "../../../../../../prisma/db";
+import { Device } from "../../../../../../src/domain/entities/device/device.js";
+import { Measurement } from "../../../../../../src/domain/entities/measurement/measurement.js";
+import { PrismaDeviceRepository } from "../../../../../../src/infrastructure/database/prisma/repositories/prisma-device-repository.js";
+import { PrismaMeasurementRepository } from "../../../../../../src/infrastructure/database/prisma/repositories/prisma-measurement-repository.js";
+import { db } from "../../../../../../prisma/db.js";
 
 describe("PrismaMeasurementRepository integration", () => {
   const measurementRepository = new PrismaMeasurementRepository();

@@ -1,4 +1,4 @@
-import { Measurement } from "../../domain/entities/measurement/measurement";
+import { Measurement } from "../../domain/entities/measurement/measurement.js";
 
 export interface MeasurementOutput {
   id: string;

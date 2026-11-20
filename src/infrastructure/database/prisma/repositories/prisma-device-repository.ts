@@ -1,7 +1,7 @@
-import { Device } from "../../../../domain/entities/device/device";
-import type { DeviceRepository } from "../../../../domain/repositories/device-repository";
-import { db } from "../../../../../prisma/db";
-import { PrismaDeviceMapper } from "../mappers/prisma-device-mapper";
+import { Device } from "../../../../domain/entities/device/device.js";
+import type { DeviceRepository } from "../../../../domain/repositories/device-repository.js";
+import { db } from "../../../../../prisma/db.js";
+import { PrismaDeviceMapper } from "../mappers/prisma-device-mapper.js";
 
 export class PrismaDeviceRepository implements DeviceRepository {
   

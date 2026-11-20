@@ -1,10 +1,10 @@
 import type { FastifyInstance } from "fastify";
-import type { Routes } from "./routes.interface";
-import type { DeviceController } from "../controllers/device-controller";
-import type { RegisterDeviceInput } from "../../../application/use-cases/register-device/register-device-input";
-import { registerDeviceSchema } from "../schemas/register-device-schema";
-import { listDevicesSchema } from "../schemas/list-devices-schema";
-import { getDeviceByIdSchema } from "../schemas/get-device-by-id-schema";
+import type { Routes } from "./routes.interface.js";
+import type { DeviceController } from "../controllers/device-controller.js";
+import type { RegisterDeviceInput } from "../../../application/use-cases/register-device/register-device-input.js";
+import { registerDeviceSchema } from "../schemas/register-device-schema.js";
+import { listDevicesSchema } from "../schemas/list-devices-schema.js";
+import { getDeviceByIdSchema } from "../schemas/get-device-by-id-schema.js";
 
 export class DeviceRoutes implements Routes {
   constructor(

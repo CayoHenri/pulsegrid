@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Measurement } from "../../../src/domain/entities/measurement/measurement";
+import { Measurement } from "../../../src/domain/entities/measurement/measurement.js";
 
 describe("Measurement", () => {
   afterEach(() => vi.useRealTimers());

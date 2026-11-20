@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { DatabaseHealthCheck } from "../../../application/ports/database-health-check";
-import { ApplicationLifecycle } from "../../../application/services/application-lifecycle";
+import { DatabaseHealthCheck } from "../../../application/ports/database-health-check.js";
+import { ApplicationLifecycle } from "../../../application/services/application-lifecycle.js";
 
 export class HealthController {
   constructor(
@@ -20,7 +20,10 @@ export class HealthController {
     });
   }
 
-  public async ready(_: FastifyRequest, reply: FastifyReply): Promise<void> {
+  public async ready(
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ): Promise<void> {
     if (this.applicationLifecycle.isShuttingDown()) {
       await reply.status(503).send({
         status: "not_ready",
@@ -34,7 +37,7 @@ export class HealthController {
         status: "ready",
       });
     } catch (error) {
-      console.error("Database health check failed:", error);
+      request.log.error({ err: error }, "Database health check failed");
       await reply.status(503).send({
         status: "not_ready",
       });

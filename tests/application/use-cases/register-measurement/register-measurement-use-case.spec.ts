@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { RegisterMeasurementUseCase } from "../../../../src/application/use-cases/register-measurement/register-measurement-use-case";
-import { Device } from "../../../../src/domain/entities/device/device";
-import { Measurement } from "../../../../src/domain/entities/measurement/measurement";
-import type { MeasurementRepository } from "../../../../src/domain/repositories/measurement-repository";
-import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository";
+import { RegisterMeasurementUseCase } from "../../../../src/application/use-cases/register-measurement/register-measurement-use-case.js";
+import { Device } from "../../../../src/domain/entities/device/device.js";
+import { Measurement } from "../../../../src/domain/entities/measurement/measurement.js";
+import type { MeasurementRepository } from "../../../../src/domain/repositories/measurement-repository.js";
+import { InMemoryDeviceRepository } from "../../../../src/infrastructure/repositories/in-memory/in-memory-device-repository.js";
 
 describe("RegisterMeasurementUseCase", () => {
   let deviceRepository: InMemoryDeviceRepository;

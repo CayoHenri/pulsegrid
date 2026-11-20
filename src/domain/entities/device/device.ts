@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { DomainError } from "../../errors/domain-error";
-import type { DeviceProps } from "./device-props";
-import type { DeviceStatus, DeviceType } from "./device-types";
+import { DomainError } from "../../errors/domain-error.js";
+import type { DeviceProps } from "./device-props.js";
+import type { DeviceStatus, DeviceType } from "./device-types.js";
 
-export type { DeviceProps } from "./device-props";
-export type { DeviceStatus, DeviceType } from "./device-types";
+export type { DeviceProps } from "./device-props.js";
+export type { DeviceStatus, DeviceType } from "./device-types.js";
 
 export class Device {
   private readonly _id: string;

@@ -1,5 +1,5 @@
-import { Device } from "../../../domain/entities/device/device";
-import { DeviceRepository } from "../../../domain/repositories/device-repository";
+import { Device } from "../../../domain/entities/device/device.js";
+import { DeviceRepository } from "../../../domain/repositories/device-repository.js";
 
 export class InMemoryDeviceRepository implements DeviceRepository {
   private readonly devices: Device[] = [];

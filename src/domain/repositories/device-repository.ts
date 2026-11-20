@@ -1,4 +1,4 @@
-import { Device } from "../entities/device/device";
+import { Device } from "../entities/device/device.js";
 
 export interface DeviceRepository {
   create(device: Device): Promise<void>;

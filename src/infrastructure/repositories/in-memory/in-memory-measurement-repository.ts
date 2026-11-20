@@ -1,5 +1,5 @@
-import { Measurement } from "../../../domain/entities/measurement/measurement";
-import { MeasurementRepository } from "../../../domain/repositories/measurement-repository";
+import { Measurement } from "../../../domain/entities/measurement/measurement.js";
+import { MeasurementRepository } from "../../../domain/repositories/measurement-repository.js";
 
 export class InMemoryMeasurementRepository implements MeasurementRepository {
   private readonly measurements: Measurement[] = [];

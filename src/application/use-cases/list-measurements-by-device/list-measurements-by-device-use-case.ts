@@ -1,8 +1,8 @@
-import { DeviceRepository } from "../../../domain/repositories/device-repository";
-import { MeasurementRepository } from "../../../domain/repositories/measurement-repository";
-import { DeviceNotFoundError } from "../../errors/device-not-found-error";
-import { MeasurementOutput, toMeasurementOutput } from "../measurement-output";
-import { ListMeasurementsByDeviceInput } from "./list-measurements-by-device-input";
+import { DeviceRepository } from "../../../domain/repositories/device-repository.js";
+import { MeasurementRepository } from "../../../domain/repositories/measurement-repository.js";
+import { DeviceNotFoundError } from "../../errors/device-not-found-error.js";
+import { MeasurementOutput, toMeasurementOutput } from "../measurement-output.js";
+import { ListMeasurementsByDeviceInput } from "./list-measurements-by-device-input.js";
 
 export class ListMeasurementsByDeviceUseCase {
   constructor(
