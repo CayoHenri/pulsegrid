@@ -1,6 +1,7 @@
 import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { DomainError } from "../../../domain/errors/domain-error";
 import { DeviceNotFoundError } from "../../../application/errors/device-not-found-error";
+import { MeasurementNotFoundError } from "../../../application/errors/measurement-not-found-error";
 
 export class HttpErrorHandler {
   public static async handle(
@@ -28,7 +29,7 @@ export class HttpErrorHandler {
       return;
     }
 
-    if (error instanceof DeviceNotFoundError) {
+    if (error instanceof DeviceNotFoundError || error instanceof MeasurementNotFoundError) {
       request.log.info({ err: error }, "Device was not found");
       await reply.status(404).send({
         error: "Not Found",

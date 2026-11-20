@@ -74,7 +74,7 @@ describe("RegisterMeasurementUseCase", () => {
         value: 18.7,
         recordedAt,
       }),
-    ).rejects.toThrow("Device not found");
+    ).rejects.toThrow('Device with id "non-existing-device" was not found.');
 
     expect(measurementRepository.create).not.toHaveBeenCalled();
   });

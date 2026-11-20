@@ -17,6 +17,10 @@ import type { DatabaseHealthCheck } from "./application/ports/database-health-ch
 import { PrismaMeasurementRepository } from "./infrastructure/database/prisma/repositories/prisma-measurement-repository";
 import { RegisterMeasurementUseCase } from "./application/use-cases/register-measurement/register-measurement-use-case";
 import { MeasurementRepository } from "./domain/repositories/measurement-repository";
+import { MeasurementController } from "./presentation/http/controllers/measurement-controller";
+import { MeasurementRoutes } from "./presentation/http/routes/measurement-routes";
+import { GetMeasurementByIdUseCase } from "./application/use-cases/get-measurement-by-id/get-measurement-by-id-use-case";
+import { ListMeasurementsByDeviceUseCase } from "./application/use-cases/list-measurements-by-device/list-measurements-by-device-use-case";
 
 export class App {
   private readonly server: FastifyInstance;
@@ -27,7 +31,7 @@ export class App {
   constructor(
     deviceRepository: DeviceRepository = new PrismaDeviceRepository(),
     databaseHealthCheck: DatabaseHealthCheck = new PrismaDatabaseHealthCheck(),
-    measurementRepository: PrismaMeasurementRepository = new PrismaMeasurementRepository(),
+    measurementRepository: MeasurementRepository = new PrismaMeasurementRepository(),
   ) {
     this.databaseHealthCheck = databaseHealthCheck;
     this.server = fastify({
@@ -75,13 +79,25 @@ export class App {
       deviceRepository,
       measurementRepository,
     );
+    const getMeasurementByIdUseCase = new GetMeasurementByIdUseCase(measurementRepository);
+    const listMeasurementsByDeviceUseCase = new ListMeasurementsByDeviceUseCase(
+      deviceRepository,
+      measurementRepository,
+    );
+    const measurementController = new MeasurementController(
+      registerMeasurementUseCase,
+      getMeasurementByIdUseCase,
+      listMeasurementsByDeviceUseCase,
+    );
 
     const rootRoutes = new RootRoutes(this.server);
     const healthRoutes = new HealthRoutes(this.server, healthController);
     const deviceRoutes = new DeviceRoutes(this.server, deviceController);
+    const measurementRoutes = new MeasurementRoutes(this.server, measurementController);
 
     rootRoutes.register();
     healthRoutes.register();
     deviceRoutes.register();
+    measurementRoutes.register();
   }
 }
