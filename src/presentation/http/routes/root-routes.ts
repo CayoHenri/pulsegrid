@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import type { Routes } from "./routes.interface.js";
+import { rootResponseSchema } from "../schemas/root-response-schema.js";
 
 export class RootRoutes implements Routes {
   constructor(private readonly server: FastifyInstance) {}
@@ -11,15 +12,7 @@ export class RootRoutes implements Routes {
         schema: {
           tags: ["Health"],
           summary: "Informações básicas da API",
-          response: {
-            200: {
-              type: "object",
-              properties: {
-                name: { type: "string" },
-                status: { type: "string" },
-              },
-            },
-          },
+          response: { 200: rootResponseSchema },
         },
       },
       async () => {

@@ -1,3 +1,6 @@
+import { errorResponseSchema } from "./error-response-schema.js";
+import { measurementResponseSchema } from "./measurement-response-schema.js";
+
 export const registerMeasurementSchema = {
   tags: ["Measurements"],
   summary: "Registra uma medição",
@@ -23,16 +26,8 @@ export const registerMeasurementSchema = {
     },
   },
   response: {
-    201: {
-      type: "object",
-      required: ["id", "deviceId", "value", "recordedAt", "createdAt"],
-      properties: {
-        id: { type: "string", format: "uuid" },
-        deviceId: { type: "string", format: "uuid" },
-        value: { type: "number" },
-        recordedAt: { type: "string", format: "date-time" },
-        createdAt: { type: "string", format: "date-time" },
-      },
-    },
+    201: measurementResponseSchema,
+    400: errorResponseSchema,
+    404: errorResponseSchema,
   },
 } as const;

@@ -52,6 +52,22 @@ describe("HTTP API", () => {
         "/devices/{deviceId}/measurements": { get: expect.any(Object) },
       },
     });
+    const document = openapi.json<{ paths: Record<string, Record<string, { responses: Record<string, unknown> }>> }>();
+    expect(document.paths["/devices"].get.responses).toHaveProperty("200");
+    expect(document.paths["/devices/{id}"].get.responses).toHaveProperty("404");
+    expect(document.paths["/measurements/{id}"].get.responses).toMatchObject({
+      200: expect.any(Object),
+      404: expect.any(Object),
+    });
+    expect(document.paths["/devices/{deviceId}/measurements"].get.responses).toMatchObject({
+      200: expect.any(Object),
+      404: expect.any(Object),
+    });
+    expect(document.paths["/health"].get.responses).toHaveProperty("200");
+    expect(document.paths["/ready"].get.responses).toMatchObject({
+      200: expect.any(Object),
+      503: expect.any(Object),
+    });
   });
 
   it("registers, lists, and fetches a device", async () => {

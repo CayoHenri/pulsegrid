@@ -1,3 +1,6 @@
+import { deviceResponseSchema } from "./device-response-schema.js";
+import { errorResponseSchema } from "./error-response-schema.js";
+
 export const registerDeviceSchema = {
   tags: ["Devices"],
   summary: "Cadastra um dispositivo",
@@ -22,20 +25,7 @@ export const registerDeviceSchema = {
     },
   },
   response: {
-    201: {
-      type: "object",
-      required: ["id", "name", "type", "location", "status", "createdAt"],
-      properties: {
-        id: { type: "string", format: "uuid" },
-        name: { type: "string" },
-        type: {
-          type: "string",
-          enum: ["TEMPERATURE", "HUMIDITY", "PRESSURE", "MULTI_SENSOR"],
-        },
-        location: { type: "string" },
-        status: { type: "string", enum: ["ACTIVE", "INACTIVE"] },
-        createdAt: { type: "string", format: "date-time" },
-      },
-    },
+    201: deviceResponseSchema,
+    400: errorResponseSchema,
   },
 } as const;

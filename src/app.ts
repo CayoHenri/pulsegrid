@@ -23,6 +23,7 @@ import { GetMeasurementByIdUseCase } from "./application/use-cases/get-measureme
 import { ListMeasurementsByDeviceUseCase } from "./application/use-cases/list-measurements-by-device/list-measurements-by-device-use-case.js";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
+import { errorResponseSchema } from "./presentation/http/schemas/error-response-schema.js";
 
 export class App {
   private readonly server: FastifyInstance;
@@ -88,17 +89,7 @@ export class App {
             description: "Registro e consulta de medições",
           },
         ],
-        components: {
-          schemas: {
-            Error: {
-              type: "object",
-              properties: {
-                error: { type: "string" },
-                message: { type: "string" },
-              },
-            },
-          },
-        },
+        components: { schemas: { Error: errorResponseSchema } },
       },
     });
     this.registerRoutes(deviceRepository, measurementRepository);

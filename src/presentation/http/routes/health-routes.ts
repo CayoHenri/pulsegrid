@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import type { Routes } from "./routes.interface.js";
 import { HealthController } from "../controllers/health-controller.js";
+import { healthResponseSchemas } from "../schemas/health-response-schemas.js";
 
 export class HealthRoutes implements Routes {
   constructor(
@@ -11,7 +12,7 @@ export class HealthRoutes implements Routes {
   public register(): void {
     this.server.get(
       "/health",
-      { schema: { tags: ["Health"], summary: "Verifica se a API responde" } },
+      { schema: { tags: ["Health"], summary: "Verifica se a API responde", response: { 200: healthResponseSchemas.healthy } } },
       async (request, reply) => {
         await this.controller.health(request, reply);
       },
@@ -23,6 +24,7 @@ export class HealthRoutes implements Routes {
         schema: {
           tags: ["Health"],
           summary: "Verifica se o processo está ativo",
+          response: { 200: healthResponseSchemas.alive },
         },
       },
       async (request, reply) => {
@@ -36,6 +38,7 @@ export class HealthRoutes implements Routes {
         schema: {
           tags: ["Health"],
           summary: "Verifica se a API está pronta para receber tráfego",
+          response: { 200: healthResponseSchemas.ready, 503: healthResponseSchemas.notReady },
         },
       },
       async (request, reply) => {
