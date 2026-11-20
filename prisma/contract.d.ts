@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'b57a5a1c49d7a4d599d7c8d516860a0f456019e3ed3bfe6c02c7f5476d38207e'>;
+  StorageHashBase<'dd657f8d9cc485dc9177be8b74fbc2e666786193c9d9f52b721c88077006740b'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
@@ -306,11 +306,21 @@ export namespace Models {
     type: FieldOutputTypes['public']['Device']['type'];
     readonly [RelationKeys]?: never;
   };
+  export type public_Measurement = {
+    createdAt: FieldOutputTypes['public']['Measurement']['createdAt'];
+    deviceId: FieldOutputTypes['public']['Measurement']['deviceId'];
+    id: FieldOutputTypes['public']['Measurement']['id'];
+    recordedAt: FieldOutputTypes['public']['Measurement']['recordedAt'];
+    value: FieldOutputTypes['public']['Measurement']['value'];
+    device: public_Device;
+    readonly [RelationKeys]?: 'device';
+  };
 }
 
 export declare const models: {
   public: {
     Device: Models.public_Device;
+    Measurement: Models.public_Measurement;
   };
 };
 
@@ -384,6 +394,73 @@ type ContractBase = Omit<
               indexes: readonly [];
               foreignKeys: readonly [];
             };
+            readonly measurements: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+                readonly device_id: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly recorded_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+                readonly value: {
+                  readonly dataType: 'pg/float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'measurements_device_id_idx_8f329912';
+                  readonly prefix: 'measurements_device_id_idx';
+                  readonly columns: readonly ['device_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'measurements_device_id_recorded_at_idx_c1f79609';
+                  readonly prefix: 'measurements_device_id_recorded_at_idx';
+                  readonly columns: readonly ['device_id', 'recorded_at'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'measurements';
+                    readonly columns: readonly ['device_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'devices';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
           };
           readonly valueSet: {
             readonly DeviceStatus: {
@@ -406,6 +483,10 @@ type ContractBase = Omit<
   readonly targetFamily: 'sql';
   readonly roots: {
     readonly devices: { readonly namespace: 'public' & NamespaceId; readonly model: 'Device' };
+    readonly measurements: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Measurement';
+    };
   };
   readonly domain: {
     readonly namespaces: {
@@ -461,6 +542,63 @@ type ContractBase = Omit<
                 readonly name: { readonly column: 'name' };
                 readonly status: { readonly column: 'status' };
                 readonly type: { readonly column: 'type' };
+              };
+            };
+          };
+          readonly Measurement: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly deviceId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly recordedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly value: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+            };
+            readonly relations: {
+              readonly device: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Device';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['deviceId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'measurements';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly deviceId: { readonly column: 'device_id' };
+                readonly id: { readonly column: 'id' };
+                readonly recordedAt: { readonly column: 'recorded_at' };
+                readonly value: { readonly column: 'value' };
               };
             };
           };

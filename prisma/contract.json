@@ -7,6 +7,10 @@
     "devices": {
       "model": "Device",
       "namespace": "public"
+    },
+    "measurements": {
+      "model": "Measurement",
+      "namespace": "public"
     }
   },
   "domain": {
@@ -140,6 +144,90 @@
               "namespaceId": "public",
               "table": "devices"
             }
+          },
+          "Measurement": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "deviceId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "recordedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "value": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "device": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "deviceId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Device",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "deviceId": {
+                  "column": "device_id"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "recordedAt": {
+                  "column": "recorded_at"
+                },
+                "value": {
+                  "column": "value"
+                }
+              },
+              "namespaceId": "public",
+              "table": "measurements"
+            }
           }
         }
       }
@@ -232,6 +320,92 @@
                 ]
               },
               "uniques": []
+            },
+            "measurements": {
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "device_id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "recorded_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "value": {
+                  "codecId": "pg/float8@1",
+                  "dataType": "pg/float8",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "measurements_device_id_idx_8f329912"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "device_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "measurements"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "devices"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "device_id"
+                  ],
+                  "name": "measurements_device_id_idx_8f329912",
+                  "prefix": "measurements_device_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "device_id",
+                    "recorded_at"
+                  ],
+                  "name": "measurements_device_id_recorded_at_idx_c1f79609",
+                  "prefix": "measurements_device_id_recorded_at_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             }
           },
           "valueSet": {
@@ -257,7 +431,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b57a5a1c49d7a4d599d7c8d516860a0f456019e3ed3bfe6c02c7f5476d38207e"
+    "storageHash": "dd657f8d9cc485dc9177be8b74fbc2e666786193c9d9f52b721c88077006740b"
   },
   "capabilities": {
     "postgres": {

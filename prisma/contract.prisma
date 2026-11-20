@@ -1,5 +1,4 @@
 // use prisma-8
-
 enum DeviceType {
   TEMPERATURE
   HUMIDITY
@@ -13,12 +12,23 @@ enum DeviceStatus {
 }
 
 model Device {
-  id        Uuid         @id
-  name      VarChar(120)
-  type      DeviceType
-  location  VarChar(160)
-  status    DeviceStatus @default(ACTIVE)
-  createdAt TimestamptzString(3) @default(now()) @map("created_at")
-
+  id           Uuid                 @id
+  name         VarChar(120)
+  type         DeviceType
+  location     VarChar(160)
+  status       DeviceStatus         @default(ACTIVE)
+  createdAt    TimestamptzString(3) @default(now()) @map("created_at")
   @@map("devices")
+}
+
+model Measurement {
+  id         Uuid                 @id
+  deviceId   Uuid                 @map("device_id")
+  value      Float
+  recordedAt TimestamptzString(3) @map("recorded_at")
+  createdAt  TimestamptzString(3) @default(now()) @map("created_at")
+  device     Device               @relation(fields: [deviceId], references: [id], onDelete: Restrict)
+
+  @@index([deviceId, recordedAt])
+  @@map("measurements")
 }

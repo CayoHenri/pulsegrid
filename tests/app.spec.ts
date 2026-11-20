@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { App } from "../src/app";
 import { InMemoryDeviceRepository } from "../src/infrastructure/repositories/in-memory/in-memory-device-repository";
+import { InMemoryMeasurementRepository } from "../src/infrastructure/repositories/in-memory/in-memory-measurement-repository";
 
 describe("HTTP API", () => {
   const apps: App[] = [];
@@ -10,7 +11,11 @@ describe("HTTP API", () => {
   });
 
   const createApp = (): App => {
-    const app = new App(new InMemoryDeviceRepository());
+    const app = new App(
+      new InMemoryDeviceRepository(),
+      undefined,
+      new InMemoryMeasurementRepository(),
+    );
     apps.push(app);
     return app;
   };
@@ -27,6 +32,26 @@ describe("HTTP API", () => {
     expect(root.json()).toEqual({ name: "PulseGrid API", status: "running" });
     expect(health.statusCode).toBe(200);
     expect(health.json()).toEqual({ status: "ok" });
+  });
+
+  it("serves Swagger UI and documents API routes", async () => {
+    const app = createApp();
+    await app.getServer().ready();
+    const docs = await app.getServer().inject({ method: "GET", url: "/docs" });
+    const openapi = await app.getServer().inject({ method: "GET", url: "/docs/json" });
+
+    expect(docs.statusCode).toBe(200);
+    expect(docs.headers["content-type"]).toContain("text/html");
+    expect(openapi.statusCode).toBe(200);
+    expect(openapi.json()).toMatchObject({
+      info: { title: "PulseGrid API", version: "1.0.0" },
+      paths: {
+        "/devices": { post: expect.any(Object), get: expect.any(Object) },
+        "/measurements": { post: expect.any(Object) },
+        "/measurements/{id}": { get: expect.any(Object) },
+        "/devices/{deviceId}/measurements": { get: expect.any(Object) },
+      },
+    });
   });
 
   it("registers, lists, and fetches a device", async () => {
@@ -127,5 +152,46 @@ describe("HTTP API", () => {
 
     expect(response.statusCode).toBe(404);
     expect(response.json()).toMatchObject({ error: "Not Found" });
+  });
+
+  it("registers, fetches, and lists measurements for a device", async () => {
+    const app = createApp();
+    const deviceResponse = await app.getServer().inject({
+      method: "POST", url: "/devices",
+      payload: { name: "Sensor", type: "TEMPERATURE", location: "Lab" },
+    });
+    const device = deviceResponse.json<{ id: string }>();
+    const payload = { deviceId: device.id, value: 21.75, recordedAt: "2026-11-19T10:00:00.000Z" };
+
+    const created = await app.getServer().inject({ method: "POST", url: "/measurements", payload });
+    expect(created.statusCode).toBe(201);
+    expect(created.json()).toMatchObject({ deviceId: device.id, value: 21.75, recordedAt: payload.recordedAt });
+
+    const measurement = created.json<{ id: string }>();
+    const found = await app.getServer().inject({ method: "GET", url: `/measurements/${measurement.id}` });
+    const listed = await app.getServer().inject({ method: "GET", url: `/devices/${device.id}/measurements` });
+    expect(found.statusCode).toBe(200);
+    expect(found.json()).toMatchObject({ id: measurement.id, deviceId: device.id, value: 21.75 });
+    expect(listed.statusCode).toBe(200);
+    expect(listed.json()).toHaveLength(1);
+    expect(listed.json()[0]).toMatchObject({ id: measurement.id, value: 21.75 });
+  });
+
+  it("returns 400 for invalid measurement payloads", async () => {
+    const app = createApp();
+    const response = await app.getServer().inject({
+      method: "POST", url: "/measurements",
+      payload: { deviceId: "bad-id", value: "hot", recordedAt: "yesterday" },
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.json()).toMatchObject({ error: "Bad Request", message: "Invalid request data." });
+  });
+
+  it("returns 404 for missing measurements and unknown devices in measurement lists", async () => {
+    const app = createApp();
+    const missingMeasurement = await app.getServer().inject({ method: "GET", url: "/measurements/00000000-0000-4000-8000-000000000000" });
+    const missingDeviceList = await app.getServer().inject({ method: "GET", url: "/devices/00000000-0000-4000-8000-000000000000/measurements" });
+    expect(missingMeasurement.statusCode).toBe(404);
+    expect(missingDeviceList.statusCode).toBe(404);
   });
 });

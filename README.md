@@ -59,6 +59,10 @@ npm run build
 npm start
 ```
 
+## Documentação Swagger
+
+Com a API em execução, abra `http://localhost:3000/docs` para explorar e testar as rotas pela interface Swagger UI. O documento OpenAPI em JSON fica disponível em `http://localhost:3000/docs/json`.
+
 ## Health checks
 
 A API expõe três endpoints para monitoramento:
