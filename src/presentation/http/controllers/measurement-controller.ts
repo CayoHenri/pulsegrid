@@ -32,10 +32,21 @@ export class MeasurementController {
   }
 
   public async listByDevice(
-    request: FastifyRequest<{ Params: { deviceId: string } }>,
+    request: FastifyRequest<{
+      Params: { deviceId: string };
+      Querystring: {
+        limit?: number;
+        from?: string;
+        to?: string;
+        cursor?: string;
+      };
+    }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const result = await this.listMeasurementsByDeviceUseCase.execute({ deviceId: request.params.deviceId });
+    const result = await this.listMeasurementsByDeviceUseCase.execute({
+      deviceId: request.params.deviceId,
+      ...request.query,
+    });
     await reply.status(200).send(result);
   }
 }

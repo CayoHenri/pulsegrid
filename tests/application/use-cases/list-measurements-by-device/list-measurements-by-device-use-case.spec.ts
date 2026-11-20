@@ -12,9 +12,16 @@ describe("ListMeasurementsByDeviceUseCase", () => {
     const measurement = Measurement.create({ deviceId: device.id, value: 20, recordedAt: new Date("2026-11-19T10:00:00Z") });
     const measurements = { create: vi.fn(), findById: vi.fn(), findByDeviceId: vi.fn().mockResolvedValue([measurement]) };
     const result = await new ListMeasurementsByDeviceUseCase(devices, measurements).execute({ deviceId: device.id });
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({ id: measurement.id, value: 20 });
-    expect(measurements.findByDeviceId).toHaveBeenCalledExactlyOnceWith(device.id);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]).toMatchObject({ id: measurement.id, value: 20 });
+    expect(result).toMatchObject({ nextCursor: null, hasMore: false });
+    expect(measurements.findByDeviceId).toHaveBeenCalledExactlyOnceWith({
+      deviceId: device.id,
+      limit: 21,
+      from: undefined,
+      to: undefined,
+      cursor: undefined,
+    });
   });
 
   it("throws when the device does not exist without querying measurements", async () => {

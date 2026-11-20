@@ -63,6 +63,12 @@ npm start
 
 Com a API em execução, abra `http://localhost:3000/docs` para explorar e testar as rotas pela interface Swagger UI. O documento OpenAPI em JSON fica disponível em `http://localhost:3000/docs/json`.
 
+### Listar medições
+
+`GET /devices/:deviceId/measurements` usa paginação por cursor. `limit` é opcional (padrão `20`, máximo `100`); `from` e `to` são datas ISO 8601 inclusivas sobre `recordedAt`; `cursor` é o `nextCursor` opaco devolvido na página anterior. Os resultados são ordenados por `recordedAt DESC` e, em caso de empate, `id DESC`.
+
+Exemplo: `/devices/<deviceId>/measurements?limit=20&from=2026-11-01T00:00:00Z&to=2026-11-20T00:00:00Z`.
+
 ## Health checks
 
 A API expõe três endpoints para monitoramento:

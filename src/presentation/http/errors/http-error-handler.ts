@@ -2,6 +2,7 @@ import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { DomainError } from "../../../domain/errors/domain-error.js";
 import { DeviceNotFoundError } from "../../../application/errors/device-not-found-error.js";
 import { MeasurementNotFoundError } from "../../../application/errors/measurement-not-found-error.js";
+import { InvalidPaginationParameterError } from "../../../application/pagination/pagination-errors.js";
 
 export class HttpErrorHandler {
   public static async handle(
@@ -17,6 +18,16 @@ export class HttpErrorHandler {
         details: error.validation,
       });
 
+      return;
+    }
+    if (
+      error instanceof InvalidPaginationParameterError
+    ) {
+      request.log.info({ err: error }, "Request query was rejected");
+      await reply.status(400).send({
+        error: "Bad Request",
+        message: error.message,
+      });
       return;
     }
     if (error instanceof DomainError) {

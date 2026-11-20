@@ -31,7 +31,15 @@ export class MeasurementRoutes implements Routes {
       },
     );
 
-    this.server.get<{ Params: { deviceId: string } }>(
+    this.server.get<{
+      Params: { deviceId: string };
+      Querystring: {
+        limit?: number;
+        from?: string;
+        to?: string;
+        cursor?: string;
+      };
+    }>(
       "/devices/:deviceId/measurements",
       { schema: listMeasurementsByDeviceSchema },
       async (request, reply) => {

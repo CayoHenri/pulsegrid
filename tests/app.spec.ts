@@ -52,7 +52,12 @@ describe("HTTP API", () => {
         "/devices/{deviceId}/measurements": { get: expect.any(Object) },
       },
     });
-    const document = openapi.json<{ paths: Record<string, Record<string, { responses: Record<string, unknown> }>> }>();
+    const document = openapi.json<{
+      paths: Record<
+        string,
+        Record<string, { responses: Record<string, unknown>; parameters?: unknown[] }>
+      >;
+    }>();
     expect(document.paths["/devices"].get.responses).toHaveProperty("200");
     expect(document.paths["/devices/{id}"].get.responses).toHaveProperty("404");
     expect(document.paths["/measurements/{id}"].get.responses).toMatchObject({
@@ -63,6 +68,14 @@ describe("HTTP API", () => {
       200: expect.any(Object),
       404: expect.any(Object),
     });
+    expect(document.paths["/devices/{deviceId}/measurements"].get.parameters).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "limit", in: "query", schema: expect.objectContaining({ maximum: 100 }) }),
+        expect.objectContaining({ name: "from", in: "query" }),
+        expect.objectContaining({ name: "to", in: "query" }),
+        expect.objectContaining({ name: "cursor", in: "query" }),
+      ]),
+    );
     expect(document.paths["/health"].get.responses).toHaveProperty("200");
     expect(document.paths["/ready"].get.responses).toMatchObject({
       200: expect.any(Object),
@@ -189,8 +202,85 @@ describe("HTTP API", () => {
     expect(found.statusCode).toBe(200);
     expect(found.json()).toMatchObject({ id: measurement.id, deviceId: device.id, value: 21.75 });
     expect(listed.statusCode).toBe(200);
-    expect(listed.json()).toHaveLength(1);
-    expect(listed.json()[0]).toMatchObject({ id: measurement.id, value: 21.75 });
+    expect(listed.json()).toMatchObject({
+      items: [expect.objectContaining({ id: measurement.id, value: 21.75 })],
+      nextCursor: null,
+      hasMore: false,
+    });
+  });
+
+  it("paginates device measurements and applies inclusive time filters", async () => {
+    const app = createApp();
+    const deviceResponse = await app.getServer().inject({
+      method: "POST", url: "/devices",
+      payload: { name: "Sensor", type: "TEMPERATURE", location: "Lab" },
+    });
+    const device = deviceResponse.json<{ id: string }>();
+    const recordedTimes = [
+      "2026-11-01T00:00:00.000Z",
+      "2026-11-10T12:00:00.000Z",
+      "2026-11-20T00:00:00.000Z",
+      "2026-11-21T00:00:00.000Z",
+    ];
+
+    for (const [index, recordedAt] of recordedTimes.entries()) {
+      const created = await app.getServer().inject({
+        method: "POST", url: "/measurements",
+        payload: { deviceId: device.id, value: index, recordedAt },
+      });
+      expect(created.statusCode).toBe(201);
+    }
+
+    const firstPage = await app.getServer().inject({
+      method: "GET",
+      url: `/devices/${device.id}/measurements?limit=2&from=2026-11-01T00%3A00%3A00.000Z&to=2026-11-20T00%3A00%3A00.000Z`,
+    });
+    const firstPageBody = firstPage.json<{
+      items: { recordedAt: string; id: string }[];
+      nextCursor: string | null;
+      hasMore: boolean;
+    }>();
+
+    expect(firstPage.statusCode).toBe(200);
+    expect(firstPageBody.items.map((item) => item.recordedAt)).toEqual([
+      "2026-11-20T00:00:00.000Z",
+      "2026-11-10T12:00:00.000Z",
+    ]);
+    expect(firstPageBody.hasMore).toBe(true);
+    expect(firstPageBody.nextCursor).toBeTruthy();
+
+    const secondPage = await app.getServer().inject({
+      method: "GET",
+      url: `/devices/${device.id}/measurements?limit=2&from=2026-11-01T00%3A00%3A00.000Z&to=2026-11-20T00%3A00%3A00.000Z&cursor=${firstPageBody.nextCursor}`,
+    });
+    expect(secondPage.statusCode).toBe(200);
+    expect(secondPage.json()).toMatchObject({
+      items: [expect.objectContaining({ recordedAt: "2026-11-01T00:00:00.000Z" })],
+      nextCursor: null,
+      hasMore: false,
+    });
+  });
+
+  it("validates measurement pagination query parameters", async () => {
+    const app = createApp();
+    const deviceResponse = await app.getServer().inject({
+      method: "POST", url: "/devices",
+      payload: { name: "Sensor", type: "TEMPERATURE", location: "Lab" },
+    });
+    const device = deviceResponse.json<{ id: string }>();
+    const invalidLimit = await app.getServer().inject({
+      method: "GET", url: `/devices/${device.id}/measurements?limit=101`,
+    });
+    const invalidDateRange = await app.getServer().inject({
+      method: "GET", url: `/devices/${device.id}/measurements?from=2026-11-20T00%3A00%3A00Z&to=2026-11-01T00%3A00%3A00Z`,
+    });
+    const invalidCursor = await app.getServer().inject({
+      method: "GET", url: `/devices/${device.id}/measurements?cursor=not-a-cursor`,
+    });
+
+    expect(invalidLimit.statusCode).toBe(400);
+    expect(invalidDateRange.statusCode).toBe(400);
+    expect(invalidCursor.statusCode).toBe(400);
   });
 
   it("returns 400 for invalid measurement payloads", async () => {

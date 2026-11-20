@@ -104,7 +104,10 @@ describe("PrismaMeasurementRepository integration", () => {
     await measurementRepository.create(newer);
     await measurementRepository.create(unrelated);
 
-    const results = await measurementRepository.findByDeviceId(device.id);
+    const results = await measurementRepository.findByDeviceId({
+      deviceId: device.id,
+      limit: 20,
+    });
 
     expect(results.map((measurement) => measurement.id)).toEqual([
       newer.id,
@@ -113,5 +116,56 @@ describe("PrismaMeasurementRepository integration", () => {
     expect(
       results.every((measurement) => measurement instanceof Measurement),
     ).toBe(true);
+  });
+
+  it("applies inclusive date filters and resumes after a composite cursor", async () => {
+    const device = await createDevice();
+    const start = "2026-11-18T10:00:00.000Z";
+    const lowerId = Measurement.restore({
+      id: "00000000-0000-4000-8000-000000000001",
+      deviceId: device.id,
+      value: 1,
+      recordedAt: new Date(start),
+      createdAt: new Date(start),
+    });
+    const higherId = Measurement.restore({
+      id: "00000000-0000-4000-8000-000000000002",
+      deviceId: device.id,
+      value: 2,
+      recordedAt: new Date(start),
+      createdAt: new Date(start),
+    });
+    createdMeasurementIds.add(lowerId.id);
+    createdMeasurementIds.add(higherId.id);
+    const latest = createMeasurement(device.id, "2026-11-19T10:00:00.000Z");
+    const outside = createMeasurement(device.id, "2026-11-20T10:00:00.000Z");
+    await Promise.all([lowerId, higherId, latest, outside].map((measurement) =>
+      measurementRepository.create(measurement),
+    ));
+
+    const firstQuery = await measurementRepository.findByDeviceId({
+      deviceId: device.id,
+      from: new Date(start),
+      to: new Date("2026-11-19T10:00:00.000Z"),
+      limit: 3,
+    });
+    expect(firstQuery.map(({ id }) => id)).toEqual([
+      latest.id,
+      higherId.id,
+      lowerId.id,
+    ]);
+
+    const secondQuery = await measurementRepository.findByDeviceId({
+      deviceId: device.id,
+      from: new Date(start),
+      to: new Date("2026-11-19T10:00:00.000Z"),
+      cursor: {
+        recordedAt: firstQuery[1].recordedAt.toISOString(),
+        id: firstQuery[1].id,
+      },
+      limit: 3,
+    });
+    expect(secondQuery.map(({ id }) => id)).toEqual([lowerId.id]);
+    expect(secondQuery.map(({ id }) => id)).not.toContain(outside.id);
   });
 });

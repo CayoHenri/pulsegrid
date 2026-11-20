@@ -2,6 +2,7 @@ import { db } from "../../../../../prisma/db.js";
 import { Measurement } from "../../../../domain/entities/measurement/measurement.js";
 import { MeasurementRepository } from "../../../../domain/repositories/measurement-repository.js";
 import { PrismaMeasurementMapper } from "../mappers/prisma-measurement-mapper.js";
+import type { FindMeasurementsOptions } from "../../../../domain/repositories/measurement-repository.js";
 
 export class PrismaMeasurementRepository implements MeasurementRepository {
   public async create(measurement: Measurement): Promise<void> {
@@ -16,13 +17,30 @@ export class PrismaMeasurementRepository implements MeasurementRepository {
     return raw ? PrismaMeasurementMapper.toDomain(raw) : null;
   }
 
-  async findByDeviceId(deviceId: string): Promise<Measurement[]> {
-    const rawMeasurements = await db.orm.public.Measurement.orderBy([
+  public async findByDeviceId(
+    options: FindMeasurementsOptions,
+  ): Promise<Measurement[]> {
+    let query = db.orm.public.Measurement.where({ deviceId: options.deviceId });
+
+    if (options.from) {
+      query = query.where((measurement) =>
+        measurement.recordedAt.gte(options.from!.toISOString()),
+      );
+    }
+    if (options.to) {
+      query = query.where((measurement) =>
+        measurement.recordedAt.lte(options.to!.toISOString()),
+      );
+    }
+
+    const orderedQuery = query.orderBy([
       (measurement) => measurement.recordedAt.desc(),
       (measurement) => measurement.id.desc(),
-    ])
-      .where({ deviceId })
-      .all();
+    ]);
+
+    const rawMeasurements = options.cursor
+      ? await orderedQuery.cursor(options.cursor).limit(options.limit).all()
+      : await orderedQuery.limit(options.limit).all();
 
     return rawMeasurements.map(PrismaMeasurementMapper.toDomain);
   }
