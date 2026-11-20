@@ -3,6 +3,8 @@ import type { Routes } from "./routes.interface";
 import type { DeviceController } from "../controllers/device-controller";
 import type { RegisterDeviceInput } from "../../../application/use-cases/register-device/register-device-input";
 import { registerDeviceSchema } from "../schemas/register-device-schema";
+import { listDevicesSchema } from "../schemas/list-devices-schema";
+import { getDeviceByIdSchema } from "../schemas/get-device-by-id-schema";
 
 export class DeviceRoutes implements Routes {
   constructor(
@@ -21,12 +23,13 @@ export class DeviceRoutes implements Routes {
       },
     );
 
-    this.server.get("/devices", async (_request, reply) => {
+    this.server.get("/devices", { schema: listDevicesSchema }, async (_request, reply) => {
       await this.controller.list(reply);
     });
 
     this.server.get<{ Params: { id: string } }>(
       "/devices/:id",
+      { schema: getDeviceByIdSchema },
       async (request, reply) => {
         await this.controller.getById(request, reply);
       },

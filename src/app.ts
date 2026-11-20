@@ -21,12 +21,15 @@ import { MeasurementController } from "./presentation/http/controllers/measureme
 import { MeasurementRoutes } from "./presentation/http/routes/measurement-routes";
 import { GetMeasurementByIdUseCase } from "./application/use-cases/get-measurement-by-id/get-measurement-by-id-use-case";
 import { ListMeasurementsByDeviceUseCase } from "./application/use-cases/list-measurements-by-device/list-measurements-by-device-use-case";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 
 export class App {
   private readonly server: FastifyInstance;
   private readonly lifecycle = new ApplicationLifecycle();
   private readonly prisma = db;
   private readonly databaseHealthCheck: DatabaseHealthCheck;
+  private readonly documentationReady: Promise<void>;
 
   constructor(
     deviceRepository: DeviceRepository = new PrismaDeviceRepository(),
@@ -39,7 +42,9 @@ export class App {
     });
     this.server.setErrorHandler(HttpErrorHandler.handle);
 
-    this.registerRoutes(deviceRepository, measurementRepository);
+    this.documentationReady = Promise.resolve(
+      this.registerDocumentation(deviceRepository, measurementRepository),
+    );
   }
 
   public getServer(): FastifyInstance {
@@ -55,7 +60,53 @@ export class App {
   }
 
   public async initialize(): Promise<void> {
+    await this.documentationReady;
+    await this.server.ready();
     await this.databaseHealthCheck.ping();
+  }
+
+  private async registerDocumentation(
+    deviceRepository: DeviceRepository,
+    measurementRepository: MeasurementRepository,
+  ): Promise<void> {
+    await this.server.register(swagger, {
+      openapi: {
+        info: {
+          title: "PulseGrid API",
+          description: "API para gerenciamento de dispositivos e medições.",
+          version: "1.0.0",
+        },
+        servers: [{ url: "http://localhost:3000", description: "Local" }],
+        tags: [
+          { name: "Health", description: "Estado e disponibilidade da API" },
+          {
+            name: "Devices",
+            description: "Cadastro e consulta de dispositivos",
+          },
+          {
+            name: "Measurements",
+            description: "Registro e consulta de medições",
+          },
+        ],
+        components: {
+          schemas: {
+            Error: {
+              type: "object",
+              properties: {
+                error: { type: "string" },
+                message: { type: "string" },
+              },
+            },
+          },
+        },
+      },
+    });
+    this.registerRoutes(deviceRepository, measurementRepository);
+    await this.server.register(swaggerUi, {
+      routePrefix: "/docs",
+      staticCSP: true,
+      uiConfig: { docExpansion: "list", deepLinking: true },
+    });
   }
 
   private registerRoutes(
@@ -79,7 +130,9 @@ export class App {
       deviceRepository,
       measurementRepository,
     );
-    const getMeasurementByIdUseCase = new GetMeasurementByIdUseCase(measurementRepository);
+    const getMeasurementByIdUseCase = new GetMeasurementByIdUseCase(
+      measurementRepository,
+    );
     const listMeasurementsByDeviceUseCase = new ListMeasurementsByDeviceUseCase(
       deviceRepository,
       measurementRepository,
@@ -93,7 +146,10 @@ export class App {
     const rootRoutes = new RootRoutes(this.server);
     const healthRoutes = new HealthRoutes(this.server, healthController);
     const deviceRoutes = new DeviceRoutes(this.server, deviceController);
-    const measurementRoutes = new MeasurementRoutes(this.server, measurementController);
+    const measurementRoutes = new MeasurementRoutes(
+      this.server,
+      measurementController,
+    );
 
     rootRoutes.register();
     healthRoutes.register();

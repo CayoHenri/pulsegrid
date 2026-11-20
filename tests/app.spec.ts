@@ -34,6 +34,26 @@ describe("HTTP API", () => {
     expect(health.json()).toEqual({ status: "ok" });
   });
 
+  it("serves Swagger UI and documents API routes", async () => {
+    const app = createApp();
+    await app.getServer().ready();
+    const docs = await app.getServer().inject({ method: "GET", url: "/docs" });
+    const openapi = await app.getServer().inject({ method: "GET", url: "/docs/json" });
+
+    expect(docs.statusCode).toBe(200);
+    expect(docs.headers["content-type"]).toContain("text/html");
+    expect(openapi.statusCode).toBe(200);
+    expect(openapi.json()).toMatchObject({
+      info: { title: "PulseGrid API", version: "1.0.0" },
+      paths: {
+        "/devices": { post: expect.any(Object), get: expect.any(Object) },
+        "/measurements": { post: expect.any(Object) },
+        "/measurements/{id}": { get: expect.any(Object) },
+        "/devices/{deviceId}/measurements": { get: expect.any(Object) },
+      },
+    });
+  });
+
   it("registers, lists, and fetches a device", async () => {
     const app = createApp();
     const created = await app.getServer().inject({
